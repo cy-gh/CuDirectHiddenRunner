@@ -60,11 +60,41 @@ While While Windows allows a single environment variable to be maximum 32767 byt
 
 More info: https://docs.microsoft.com/en-us/windows/win32/procthread/environment-variables
 
+## 3rd variant (hybrid, with chunk size)
+
+This variant combines both above and is more flexible than both. Instead of gulping everything at once very fast, or iterating line by line at the expense of speed, this allows you to find the speet spot for your purposes by adjusting "chunk size".
+
+Warning: On my machine 32k and 64k both worked fine, and runs like the 1st variant, but for another DOpus user this was extremely slow.
+
+```{batch}
+  DirectHiddenRunner.js "yourEnvVarPrefix" "your chunk size" "your command goes here"
+```
+
+Output same as 2nd:
+
+| Output Environment Variable | Meaning                                                      |
+| --------------------------- | ------------------------------------------------------------ |
+| %yourEnvVarPrefixOUT0%      | number of lines standard output of the command (STDOUT)      |
+| %yourEnvVarPrefixOUT1%      | 1st line of STDOUT                                           |
+| %yourEnvVarPrefixOUT2%      | 2nd line of STDOUT                                           |
+| %yourEnvVarPrefixOUT3%      | 3rd line of STDOUT                                           |
+| ...                         | the suffices are not zero padded, i.e. they go like OUT9, OUT10... OUT99, OUT100... |
+| %yourEnvVarPrefixERR0%      | number of lines standard error of the command (STDERR)       |
+| %yourEnvVarPrefixERR1%      | 1st line of STDERR                                           |
+| %yourEnvVarPrefixERR2%      | 2nd line of STDERR                                           |
+| %yourEnvVarPrefixERR3%      | 3rd line of STDERR                                           |
+| ...                         |                                                              |
+| %yourEnvVarPrefixEC%        | Exit Code of your command, usually 0 indicates success       |
+
+
+
 # PROs and CONs
 
 Simple variant is much faster but command output length is limited. Use it for simpler commands.
 
 Pseudo-array variant is slower but it's more flexible and command output length is practically unlimited.
+
+Hybrid variant switches between the 2, depending on the chunk size.
 
 
 # IMPORTANT REMINDER
